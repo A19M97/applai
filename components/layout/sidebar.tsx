@@ -9,9 +9,8 @@ import {
   X,
   LayoutDashboard,
   TestTube,
-  LogOut
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import {cn} from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -24,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { LogoutButton } from "@/components/auth/logout-button"
 import { LanguageSwitcher } from "@/components/language-switcher"
+import {useLogout} from "@/hooks/useLogout";
 
 const menuItems = [
   {
@@ -43,6 +43,7 @@ export function Sidebar() {
   const [isMobile, setIsMobile] = useState(false)
   const pathname = usePathname()
   const { user } = useUser()
+  const handleLogout = useLogout();
 
   // Detect screen size
   useEffect(() => {
@@ -168,6 +169,14 @@ export function Sidebar() {
                 <div>
                   <LogoutButton />
                 </div>
+              <DropdownMenuItem>
+                <LogoutButton
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start px-2 cursor-pointer"
+                  showIcon={true}
+                  showLabel={true}
+                />
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

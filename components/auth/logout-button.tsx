@@ -1,23 +1,36 @@
 "use client"
 
-import { useClerk } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import { LogOut } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useLogout } from "@/hooks/useLogout"
+import { type ComponentProps } from "react"
 
-export function LogoutButton() {
-  const { signOut } = useClerk()
-  const router = useRouter()
+interface LogoutButtonProps extends Omit<ComponentProps<typeof Button>, 'onClick'> {
+  showIcon?: boolean
+  showLabel?: boolean
+}
 
-  const handleLogout = async () => {
-    await signOut()
-    router.push("/")
-  }
+export function LogoutButton({
+  showIcon = true,
+  showLabel = true,
+  variant = "outline",
+  size = "sm",
+  ...props
+}: LogoutButtonProps) {
+  const handleLogout = useLogout();
+
 
   return (
-    <Button variant="outline" size="sm" onClick={handleLogout}>
-      <LogOut className="h-4 w-4 mr-2" />
-      Logout
+    <Button
+      variant={variant}
+      size={size}
+      onClick={handleLogout}
+      {...props}
+    >
+      {showIcon && <LogOut className="h-4 w-4" />}
+      {showLabel && <span className={showIcon ? "ml-2" : ""}>
+        Logout
+      </span>}
     </Button>
   )
 }
