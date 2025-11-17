@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { Link } from "@/i18n/routing"
+import { usePathname } from "@/i18n/routing"
 import { useUser } from "@clerk/nextjs"
 import {
   Menu,
@@ -23,6 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { LogoutButton } from "@/components/auth/logout-button"
+import { LanguageSwitcher } from "@/components/language-switcher"
 
 const menuItems = [
   {
@@ -132,6 +133,11 @@ export function Sidebar() {
               </Link>
             )
           })}
+
+          {/* Language Switcher */}
+          <div className="pt-4">
+            <LanguageSwitcher />
+          </div>
         </nav>
 
         {/* User Section at Bottom */}
@@ -159,9 +165,8 @@ export function Sidebar() {
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <div className="cursor-pointer">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <LogoutButton variant="ghost" size="sm" className="p-0 h-auto font-normal" />
+                <div>
+                  <LogoutButton />
                 </div>
               </DropdownMenuItem>
             </DropdownMenuContent>

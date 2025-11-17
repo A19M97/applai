@@ -11,14 +11,19 @@ export const metadata: Metadata = {
   description: "Production-ready Next.js 15 boilerplate with Clerk, Prisma, and shadcn/ui",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params?: Promise<{ locale?: string }>;
 }>) {
+  // Get locale from params, default to 'en' if not available
+  const locale = params ? (await params).locale || 'en' : 'en';
+
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang={locale}>
         <body className={inter.className}>
           {children}
           <Toaster />
