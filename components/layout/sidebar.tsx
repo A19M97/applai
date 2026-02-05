@@ -1,18 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Link } from "@/i18n/routing"
-import { usePathname } from "@/i18n/routing"
-import { useUser } from "@clerk/nextjs"
-import {
-  Menu,
-  X,
-  LayoutDashboard,
-  TestTube,
-} from "lucide-react"
+import {useEffect, useState} from "react"
+import {Link, usePathname} from "@/i18n/routing"
+import {useUser} from "@clerk/nextjs"
+import {LayoutDashboard, Menu, TestTube, X,} from "lucide-react"
 import {cn} from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,8 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { LogoutButton } from "@/components/auth/logout-button"
-import { LanguageSwitcher } from "@/components/language-switcher"
+import {LogoutButton} from "@/components/auth/logout-button"
+import {LanguageSwitcher} from "@/components/language-switcher"
 import {useLogout} from "@/hooks/useLogout";
 
 const menuItems = [
