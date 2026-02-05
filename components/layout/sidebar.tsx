@@ -165,10 +165,6 @@ export function Sidebar() {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <div>
-                  <LogoutButton />
-                </div>
               <DropdownMenuItem>
                 <LogoutButton
                   variant="ghost"

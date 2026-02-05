@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from '@/i18n/routing';
 import { useLocale } from 'next-intl';
 import { Button } from './ui/button';
@@ -17,11 +18,16 @@ const languages = [
 ];
 
 export function LanguageSwitcher() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true) }, []);
+
   const router = useRouter();
   const pathname = usePathname();
   const locale = useLocale();
 
   const currentLanguage = languages.find((lang) => lang.code === locale);
+
+  if (!mounted) return null;
 
   const handleLanguageChange = (newLocale: string) => {
     router.replace(pathname, { locale: newLocale });
