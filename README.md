@@ -20,7 +20,16 @@ A production-ready starter template built with Next.js 16, Clerk authentication,
 
 Follow these steps in order to set up the project:
 
-### 1. Create environment file
+### 1. Clone the repository
+
+Clone with a custom folder name to avoid conflicts when running multiple projects:
+
+```bash
+git clone git@github.com:aledella12/boilerplate_nextjs.git <your-project-name>
+cd <your-project-name>
+```
+
+### 2. Create environment file
 
 Copy `.env.example` to `.env` and fill in the required values:
 
@@ -32,13 +41,13 @@ Edit `.env` with your actual credentials:
 - **Database**: PostgreSQL connection string
 - **Clerk**: Get your keys from [Clerk Dashboard](https://dashboard.clerk.com)
 
-### 2. Install dependencies
+### 3. Install dependencies
 
 ```bash
 npm ci
 ```
 
-### 3. Start PostgreSQL
+### 4. Start PostgreSQL
 
 Launch the database with Docker Compose:
 
@@ -48,13 +57,21 @@ docker compose up -d
 
 The database will be available at `localhost:5436`.
 
-### 4. Push database schema
+### 5. Push database schema
 
 ```bash
 npm run db:push
 ```
 
-### 5. Start development server
+### 6. Generate Prisma client
+
+```bash
+npm run db:generate
+```
+
+This creates the typed client in `./generated/`, required before the app can start.
+
+### 7. Start development server
 
 ```bash
 npm run dev
