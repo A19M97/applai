@@ -22,12 +22,7 @@ const menuItems = [
     title: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
-  },
-  {
-    title: "Test Page",
-    href: "/test",
-    icon: TestTube,
-  },
+  }
 ]
 
 export function Sidebar() {
