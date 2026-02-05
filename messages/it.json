@@ -1,14 +1,14 @@
 {
   "HomePage": {
     "appName": "MyApp",
-    "title": "Boilerplate Full-Stack Next.js 15",
+    "title": "Boilerplate Full-Stack Next.js 16",
     "description": "Starter pronto per la produzione con Clerk Auth, Prisma, PostgreSQL e shadcn/ui. Tutto ciò di cui hai bisogno per costruire la tua prossima applicazione SaaS.",
     "signIn": "Accedi",
     "signUp": "Inizia",
     "dashboard": "Dashboard",
     "goToDashboard": "Vai alla Dashboard",
     "startBuilding": "Inizia a Costruire",
-    "footer": "Costruito con Next.js 15, Clerk, Prisma e shadcn/ui"
+    "footer": "Costruito con Next.js 16, Clerk, Prisma 7 e shadcn/ui"
   },
   "Features": {
     "authentication": {

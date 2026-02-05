@@ -1,19 +1,19 @@
-# Next.js 15 Full-Stack Boilerplate
+# Next.js 16 Full-Stack Boilerplate
 
-A production-ready starter template built with Next.js 15, Clerk authentication, Prisma + PostgreSQL, and internationalization support.
+A production-ready starter template built with Next.js 16, Clerk authentication, Prisma 7 + PostgreSQL, and internationalization support.
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript
-- **Database**: PostgreSQL with Prisma ORM
+- **Database**: PostgreSQL with Prisma 7
 - **Authentication**: Clerk (email OTP + magic links)
 - **UI Components**: shadcn/ui with Tailwind CSS v4
 - **Internationalization**: next-intl (English & Italian)
 
 ## Prerequisites
 
-- **Node.js** 18+
+- **Node.js** 20.9+
 - **Docker** and **Docker Compose** (for PostgreSQL)
 
 ## Getting Started
