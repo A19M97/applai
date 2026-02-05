@@ -36,7 +36,6 @@ export function Sidebar() {
   const [isMobile, setIsMobile] = useState(false)
   const pathname = usePathname()
   const { user } = useUser()
-  const handleLogout = useLogout();
 
   // Detect screen size
   useEffect(() => {
@@ -128,10 +127,6 @@ export function Sidebar() {
             )
           })}
 
-          {/* Language Switcher */}
-          <div className="pt-4">
-            <LanguageSwitcher />
-          </div>
         </nav>
 
         {/* User Section at Bottom */}
@@ -157,6 +152,8 @@ export function Sidebar() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <LanguageSwitcher inline />
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <LogoutButton
