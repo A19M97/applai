@@ -3,7 +3,7 @@
 import {useEffect, useState} from "react"
 import {Link, usePathname} from "@/i18n/routing"
 import {useUser} from "@clerk/nextjs"
-import {LayoutDashboard, Menu, TestTube, X,} from "lucide-react"
+import {LayoutDashboard, Menu, X,} from "lucide-react"
 import {cn} from "@/lib/utils"
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {
