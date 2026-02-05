@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import { useTransition } from 'react';
 import { useRouter, usePathname } from '@/i18n/routing';
 import { useLocale } from 'next-intl';
 import { Button } from './ui/button';
@@ -26,15 +26,10 @@ interface LanguageSwitcherProps {
 }
 
 export function LanguageSwitcher({ inline = false }: LanguageSwitcherProps) {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true) }, []);
-
   const router = useRouter();
   const pathname = usePathname();
   const locale = useLocale();
   const [isPending, startTransition] = useTransition();
-
-  if (!mounted) return null;
 
   const handleLanguageChange = (newLocale: string) => {
     startTransition(() => {

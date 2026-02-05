@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/dropdown-menu"
 import {LogoutButton} from "@/components/auth/logout-button"
 import {LanguageSwitcher} from "@/components/language-switcher"
-import {useLogout} from "@/hooks/useLogout";
 
 const menuItems = [
   {
