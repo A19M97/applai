@@ -1,39 +1,123 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js 16 Full-Stack Boilerplate
+
+A production-ready starter template built with Next.js 16, Clerk authentication, Prisma 7 + PostgreSQL, and internationalization support.
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Database**: PostgreSQL with Prisma 7
+- **Authentication**: Clerk (email OTP + magic links)
+- **UI Components**: shadcn/ui with Tailwind CSS v4
+- **Internationalization**: next-intl (English & Italian)
+
+## Prerequisites
+
+- **Node.js** 20.9+
+- **Docker** and **Docker Compose** (for PostgreSQL)
 
 ## Getting Started
 
-First, run the development server:
+Follow these steps in order to set up the project:
+
+### 1. Clone the repository
+
+Clone with a custom folder name to avoid conflicts when running multiple projects:
+
+```bash
+git clone git@github.com:aledella12/boilerplate_nextjs.git <your-project-name>
+cd <your-project-name>
+```
+
+### 2. Create environment file
+
+Copy `.env.example` to `.env` and fill in the required values:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your actual credentials:
+- **Database**: PostgreSQL connection string
+- **Clerk**: Get your keys from [Clerk Dashboard](https://dashboard.clerk.com)
+
+### 3. Install dependencies
+
+```bash
+npm ci
+```
+
+### 4. Start PostgreSQL
+
+Launch the database with Docker Compose:
+
+```bash
+docker compose up -d
+```
+
+The database will be available at `localhost:5436`.
+
+### 5. Push database schema
+
+```bash
+npm run db:push
+```
+
+### 6. Generate Prisma client
+
+```bash
+npm run db:generate
+```
+
+This creates the typed client in `./generated/`, required before the app can start.
+
+### 7. Start development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Development
+npm run dev          # Start development server
 
-## Learn More
+# Building
+npm run build        # Build for production
+npm run start        # Start production server
 
-To learn more about Next.js, take a look at the following resources:
+# Database
+npm run db:push      # Push schema to database
+npm run db:migrate   # Run migrations
+npm run db:studio    # Open Prisma Studio
+npm run db:seed      # Seed database
+npm run db:reset     # Reset database
+npm run db:generate  # Generate Prisma client
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Code Quality
+npm run lint         # Run ESLint
+npm run type-check   # Type check with TypeScript
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+/
+├── app/                    # Next.js App Router
+│   ├── (auth)/           # Authentication routes
+│   ├── (protected)/      # Protected routes
+│   ├── [locale]/         # Internationalization
+│   └── api/webhooks/     # API routes
+├── components/           # Reusable UI components
+├── hooks/               # Custom React hooks
+├── i18n/               # Internationalization config
+├── lib/                # Utilities and configs
+├── messages/           # Translation files
+└── prisma/             # Database schema
+```
 
 ## 🔄 Come mantenere aggiornato il tuo fork con il repository originale
 
@@ -82,10 +166,10 @@ git fetch upstream
 
 ### ⚙️ 4. Unisci gli aggiornamenti nel tuo branch principale
 
-Spostati sul branch principale (ad esempio `main`):
+Spostati sul branch principale:
 
 ```bash
-git checkout main
+git checkout master
 ```
 
 Poi scegli una delle due opzioni:
@@ -93,13 +177,13 @@ Poi scegli una delle due opzioni:
 #### 🔹 Opzione A: Merge (consigliata e più sicura)
 
 ```bash
-git merge upstream/main
+git merge upstream/master
 ```
 
 #### 🔹 Opzione B: Rebase (più pulita, ma riscrive la cronologia)
 
 ```bash
-git rebase upstream/main
+git rebase upstream/master
 ```
 
 ---
@@ -107,7 +191,7 @@ git rebase upstream/main
 ### 💾 5. Aggiorna il tuo fork su GitHub
 
 ```bash
-git push origin main
+git push origin master
 ```
 
 ---
@@ -125,7 +209,7 @@ git push origin master
 
 ---
 
-💡 **Suggerimento:**  
+💡 **Suggerimento:**
 Puoi creare uno script Bash per automatizzare tutto questo:
 
 ```bash
@@ -146,4 +230,3 @@ Rendi lo script eseguibile e lancialo ogni volta che vuoi aggiornare il tuo fork
 chmod +x sync-fork.sh
 ./sync-fork.sh
 ```
-

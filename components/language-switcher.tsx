@@ -1,5 +1,6 @@
 'use client';
 
+import { useTransition } from 'react';
 import { useRouter, usePathname } from '@/i18n/routing';
 import { useLocale } from 'next-intl';
 import { Button } from './ui/button';
@@ -8,6 +9,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
 } from './ui/dropdown-menu';
 import { Globe } from 'lucide-react';
 
@@ -16,22 +20,54 @@ const languages = [
   { code: 'it', name: 'Italiano', flag: '🇮🇹' },
 ];
 
-export function LanguageSwitcher() {
+interface LanguageSwitcherProps {
+  /** If true, renders as a submenu inside an existing dropdown */
+  inline?: boolean;
+}
+
+export function LanguageSwitcher({ inline = false }: LanguageSwitcherProps) {
   const router = useRouter();
   const pathname = usePathname();
   const locale = useLocale();
-
-  const currentLanguage = languages.find((lang) => lang.code === locale);
+  const [isPending, startTransition] = useTransition();
 
   const handleLanguageChange = (newLocale: string) => {
-    router.replace(pathname, { locale: newLocale });
+    startTransition(() => {
+      router.replace(pathname, { locale: newLocale });
+    });
   };
+
+  if (inline) {
+    return (
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger disabled={isPending}>
+          <Globe className={`mr-2 h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
+          <span>Language</span>
+        </DropdownMenuSubTrigger>
+        <DropdownMenuSubContent>
+          {languages.map((language) => (
+            <DropdownMenuItem
+              key={language.code}
+              onClick={() => handleLanguageChange(language.code)}
+              disabled={isPending}
+            >
+              <span className="mr-2">{language.flag}</span>
+              {language.name}
+              {locale === language.code && <span className="ml-auto">✓</span>}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
+    );
+  }
+
+  const currentLanguage = languages.find((lang) => lang.code === locale);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2">
-          <Globe className="h-4 w-4" />
+        <Button variant="ghost" size="sm" className="gap-2" disabled={isPending}>
+          <Globe className={`h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
           <span>{currentLanguage?.flag} {currentLanguage?.name}</span>
         </Button>
       </DropdownMenuTrigger>
@@ -40,10 +76,12 @@ export function LanguageSwitcher() {
           <DropdownMenuItem
             key={language.code}
             onClick={() => handleLanguageChange(language.code)}
+            disabled={isPending}
             className={locale === language.code ? 'bg-accent' : ''}
           >
             <span className="mr-2">{language.flag}</span>
             {language.name}
+            {locale === language.code && <span className="ml-auto">✓</span>}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

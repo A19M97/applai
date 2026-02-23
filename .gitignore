@@ -44,7 +44,7 @@ next-env.d.ts
 # backup files
 *.bak
 
-/app/generated/prisma
+/generated
 
 # clerk configuration (can include secrets)
 /.clerk/

@@ -1,6 +1,7 @@
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/layout/sidebar";
+import { db } from "@/lib/db";
 
 export default async function ProtectedLayout({
   children,
@@ -11,6 +12,18 @@ export default async function ProtectedLayout({
 
   if (!userId) {
     redirect("/sign-in");
+  }
+
+  const existing = await db.user.findUnique({ where: { clerkId: userId } });
+  if (!existing) {
+    const user = await currentUser();
+    await db.user.create({
+      data: {
+        clerkId: userId,
+        email: user?.emailAddresses[0]?.emailAddress ?? "",
+        name: `${user?.firstName || ""} ${user?.lastName || ""}`.trim(),
+      },
+    });
   }
 
   return (

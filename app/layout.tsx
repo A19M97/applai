@@ -7,8 +7,8 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Next.js 15 Boilerplate",
-  description: "Production-ready Next.js 15 boilerplate with Clerk, Prisma, and shadcn/ui",
+  title: "Next.js 16 Boilerplate",
+  description: "Production-ready Next.js 16 boilerplate with Clerk, Prisma 7, and shadcn/ui",
 };
 
 export default async function RootLayout({

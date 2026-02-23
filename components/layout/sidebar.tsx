@@ -1,18 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Link } from "@/i18n/routing"
-import { usePathname } from "@/i18n/routing"
-import { useUser } from "@clerk/nextjs"
-import {
-  Menu,
-  X,
-  LayoutDashboard,
-  TestTube,
-} from "lucide-react"
+import {useEffect, useState} from "react"
+import {Link, usePathname} from "@/i18n/routing"
+import {useUser} from "@clerk/nextjs"
+import {LayoutDashboard, Menu, X,} from "lucide-react"
 import {cn} from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,21 +14,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { LogoutButton } from "@/components/auth/logout-button"
-import { LanguageSwitcher } from "@/components/language-switcher"
-import {useLogout} from "@/hooks/useLogout";
+import {LogoutButton} from "@/components/auth/logout-button"
+import {LanguageSwitcher} from "@/components/language-switcher"
 
 const menuItems = [
   {
     title: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
-  },
-  {
-    title: "Test Page",
-    href: "/test",
-    icon: TestTube,
-  },
+  }
 ]
 
 export function Sidebar() {
@@ -43,7 +30,6 @@ export function Sidebar() {
   const [isMobile, setIsMobile] = useState(false)
   const pathname = usePathname()
   const { user } = useUser()
-  const handleLogout = useLogout();
 
   // Detect screen size
   useEffect(() => {
@@ -135,10 +121,6 @@ export function Sidebar() {
             )
           })}
 
-          {/* Language Switcher */}
-          <div className="pt-4">
-            <LanguageSwitcher />
-          </div>
         </nav>
 
         {/* User Section at Bottom */}
@@ -165,10 +147,8 @@ export function Sidebar() {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <div>
-                  <LogoutButton />
-                </div>
+              <LanguageSwitcher inline />
+              <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <LogoutButton
                   variant="ghost"
