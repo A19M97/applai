@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server'
 import { LanguageSwitcher } from "@/components/language-switcher"
+import { StepForm } from "@/components/StepForm"
 import { Zap } from "lucide-react"
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -27,18 +28,20 @@ export default async function HomePage() {
         </nav>
       </header>
 
-      <main className="container mx-auto px-4 py-20">
-        <div className="max-w-2xl mx-auto text-center">
-          <h1 className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
+      <main className="container mx-auto px-4 py-12">
+        <div className="max-w-2xl mx-auto text-center mb-10">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl">
             {t('title')}
           </h1>
-          <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
+          <p className="mt-4 text-lg leading-8 text-gray-600 dark:text-gray-300">
             {t('description')}
           </p>
         </div>
+
+        <StepForm />
       </main>
 
-      <footer className="mt-32 border-t">
+      <footer className="mt-20 border-t">
         <div className="container mx-auto px-4 py-8">
           <p className="text-center text-sm text-gray-600 dark:text-gray-400">
             {t('footer')}

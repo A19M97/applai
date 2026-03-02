@@ -3,6 +3,21 @@
     "appName": "Applai",
     "title": "Get briefed before your next job interview",
     "description": "Paste your CV and a job description. Applai analyzes the match, highlights gaps, and generates tailored interview questions — in seconds.",
-    "footer": "Built with Next.js 16, Claude AI, and shadcn/ui"
+    "footer": "Built with Next.js 16, Claude AI, and shadcn/ui",
+    "sessionBanner": "You have a previous analysis —",
+    "viewResults": "View results",
+    "stepIndicator": "{step} / 2",
+    "step1Title": "Your CV",
+    "step2Title": "Job Description",
+    "cvPlaceholder": "Paste your CV here...",
+    "jdPlaceholder": "Paste the job description here...",
+    "uploadPDF": "Upload PDF",
+    "next": "Next →",
+    "back": "← Back",
+    "analyze": "Analyze",
+    "analyzing": "Analyzing...",
+    "errorAnalyze": "Failed to analyze your CV and job description. Please try again.",
+    "errorInterview": "Failed to generate interview questions. Please try again.",
+    "errorPDF": "Failed to extract text from PDF. Please paste it manually."
   }
 }

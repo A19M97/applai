@@ -3,6 +3,21 @@
     "appName": "Applai",
     "title": "Preparati prima del tuo prossimo colloquio",
     "description": "Incolla il tuo CV e un'offerta di lavoro. Applai analizza la compatibilità, evidenzia le lacune e genera domande di colloquio su misura — in pochi secondi.",
-    "footer": "Realizzato con Next.js 16, Claude AI e shadcn/ui"
+    "footer": "Realizzato con Next.js 16, Claude AI e shadcn/ui",
+    "sessionBanner": "Hai un'analisi precedente —",
+    "viewResults": "Vedi risultati",
+    "stepIndicator": "{step} / 2",
+    "step1Title": "Il tuo CV",
+    "step2Title": "Offerta di lavoro",
+    "cvPlaceholder": "Incolla qui il tuo CV...",
+    "jdPlaceholder": "Incolla qui l'offerta di lavoro...",
+    "uploadPDF": "Carica PDF",
+    "next": "Avanti →",
+    "back": "← Indietro",
+    "analyze": "Analizza",
+    "analyzing": "Analisi in corso...",
+    "errorAnalyze": "Analisi fallita. Riprova.",
+    "errorInterview": "Generazione delle domande fallita. Riprova.",
+    "errorPDF": "Impossibile estrarre il testo dal PDF. Incollalo manualmente."
   }
 }
