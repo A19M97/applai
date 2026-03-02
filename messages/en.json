@@ -19,5 +19,21 @@
     "errorAnalyze": "Failed to analyze your CV and job description. Please try again.",
     "errorInterview": "Failed to generate interview questions. Please try again.",
     "errorPDF": "Failed to extract text from PDF. Please paste it manually."
+  },
+  "ResultsPage": {
+    "appName": "Applai",
+    "pageTitle": "Your Results",
+    "matchAnalysis": "Match Analysis",
+    "interviewPrep": "Interview Prep",
+    "score": "Match Score",
+    "commonSkills": "Common Skills",
+    "missingSkills": "Missing Skills",
+    "strengths": "Strengths",
+    "coverLetterTips": "Cover Letter Tips",
+    "technicalQuestions": "Technical Questions",
+    "behavioralQuestions": "Behavioral Questions",
+    "hint": "Hint",
+    "startOver": "Start over",
+    "noPrepData": "Interview prep not available."
   }
 }

@@ -19,5 +19,21 @@
     "errorAnalyze": "Analisi fallita. Riprova.",
     "errorInterview": "Generazione delle domande fallita. Riprova.",
     "errorPDF": "Impossibile estrarre il testo dal PDF. Incollalo manualmente."
+  },
+  "ResultsPage": {
+    "appName": "Applai",
+    "pageTitle": "I tuoi risultati",
+    "matchAnalysis": "Analisi compatibilità",
+    "interviewPrep": "Preparazione colloquio",
+    "score": "Punteggio di compatibilità",
+    "commonSkills": "Competenze in comune",
+    "missingSkills": "Competenze mancanti",
+    "strengths": "Punti di forza",
+    "coverLetterTips": "Consigli per la lettera di presentazione",
+    "technicalQuestions": "Domande tecniche",
+    "behavioralQuestions": "Domande comportamentali",
+    "hint": "Suggerimento",
+    "startOver": "Ricomincia",
+    "noPrepData": "Preparazione al colloquio non disponibile."
   }
 }
