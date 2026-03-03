@@ -14,14 +14,14 @@ function parseJSON<T>(text: string, context: string): T {
   }
 }
 
-export async function analyzeMatch(cv: string, jd: string): Promise<MatchAnalysis> {
+export async function analyzeMatch(cv: string, jd: string, locale: string = 'en'): Promise<MatchAnalysis> {
   const message = await client.messages.create({
     model: MODEL,
     max_tokens: MAX_TOKENS,
     messages: [
       {
         role: 'user',
-        content: buildMatchPrompt(cv, jd),
+        content: buildMatchPrompt(cv, jd, locale),
       },
     ],
   })
@@ -37,7 +37,8 @@ export async function analyzeMatch(cv: string, jd: string): Promise<MatchAnalysi
 export async function generateInterviewPrep(
   cv: string,
   jd: string,
-  matchSummary: string
+  matchSummary: string,
+  locale: string = 'en'
 ): Promise<InterviewPrep> {
   const message = await client.messages.create({
     model: MODEL,
@@ -45,7 +46,7 @@ export async function generateInterviewPrep(
     messages: [
       {
         role: 'user',
-        content: buildInterviewPrompt(cv, jd, matchSummary),
+        content: buildInterviewPrompt(cv, jd, matchSummary, locale),
       },
     ],
   })

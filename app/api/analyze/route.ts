@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
-  const { cv, jobDescription } = body as Record<string, unknown>
+  const { cv, jobDescription, locale } = body as Record<string, unknown>
 
   if (!cv || typeof cv !== 'string' || cv.trim() === '') {
     return NextResponse.json({ error: 'cv is required' }, { status: 400 })
@@ -18,8 +18,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'jobDescription is required' }, { status: 400 })
   }
 
+  const resolvedLocale = typeof locale === 'string' ? locale : 'en'
+
   try {
-    const analysis = await analyzeMatch(cv, jobDescription)
+    const analysis = await analyzeMatch(cv, jobDescription, resolvedLocale)
     return NextResponse.json(analysis)
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unexpected error'

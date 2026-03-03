@@ -1,5 +1,8 @@
-export function buildMatchPrompt(cv: string, jd: string): string {
-  return `You are an expert recruiter and career coach. Analyze the compatibility between the following CV and job description.
+export function buildMatchPrompt(cv: string, jd: string, locale: string = 'en'): string {
+  const languageInstruction = locale === 'it'
+    ? 'Respond in Italian. All string values in the JSON must be in Italian.'
+    : 'Respond in English. All string values in the JSON must be in English.'
+  return `You are an expert recruiter and career coach. Analyze the compatibility between the following CV and job description. ${languageInstruction}
 
 CV:
 ${cv}
@@ -17,8 +20,11 @@ Return ONLY a valid JSON object with no preamble, no explanation, and no markdow
 }`
 }
 
-export function buildInterviewPrompt(cv: string, jd: string, matchSummary: string): string {
-  return `You are an expert technical interviewer and career coach. Based on the CV, job description, and match analysis below, generate tailored interview preparation questions.
+export function buildInterviewPrompt(cv: string, jd: string, matchSummary: string, locale: string = 'en'): string {
+  const languageInstruction = locale === 'it'
+    ? 'Respond in Italian. All string values in the JSON must be in Italian.'
+    : 'Respond in English. All string values in the JSON must be in English.'
+  return `You are an expert technical interviewer and career coach. Based on the CV, job description, and match analysis below, generate tailored interview preparation questions. ${languageInstruction}
 
 CV:
 ${cv}

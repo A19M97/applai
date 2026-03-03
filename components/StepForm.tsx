@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { Link, useRouter } from '@/i18n/routing'
 import { saveSession, loadSession } from '@/lib/session'
 import { MatchAnalysis, InterviewPrep } from '@/lib/types'
@@ -9,6 +9,7 @@ import { Loader2 } from 'lucide-react'
 
 export function StepForm() {
   const t = useTranslations('HomePage')
+  const locale = useLocale()
   const router = useRouter()
 
   const [step, setStep] = useState<1 | 2>(1)
@@ -53,7 +54,7 @@ export function StepForm() {
       const analyzeRes = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cv, jobDescription: jd }),
+        body: JSON.stringify({ cv, jobDescription: jd, locale }),
       })
       const analyzeData = await analyzeRes.json()
       if (!analyzeRes.ok) throw new Error(analyzeData.error ?? t('errorAnalyze'))
@@ -65,7 +66,7 @@ export function StepForm() {
       const interviewRes = await fetch('/api/interview', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cv, jobDescription: jd, matchSummary }),
+        body: JSON.stringify({ cv, jobDescription: jd, matchSummary, locale }),
       })
       const interviewData = await interviewRes.json()
       if (!interviewRes.ok) throw new Error(interviewData.error ?? t('errorInterview'))
