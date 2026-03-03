@@ -7,7 +7,7 @@ interface Props {
 }
 
 export function SkillsBreakdown({ commonSkills, missingSkills }: Props) {
-  const t = useTranslations('ResultsPage')
+  const t = useTranslations('results')
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

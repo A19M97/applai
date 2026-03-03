@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
 
 export function StepForm() {
-  const t = useTranslations('HomePage')
+  const t = useTranslations('form')
   const locale = useLocale()
   const router = useRouter()
 
@@ -87,7 +87,7 @@ export function StepForm() {
       {hasSession && (
         <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg flex items-center justify-between">
           <span className="text-sm text-blue-800 dark:text-blue-200">
-            {t('sessionBanner')}
+            {t('resumeSession')}
           </span>
           <Link
             href="/results"
@@ -101,7 +101,7 @@ export function StepForm() {
       <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-8 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {step === 1 ? t('step1Title') : t('step2Title')}
+            {step === 1 ? t('cvLabel') : t('jdLabel')}
           </h2>
           <span className="text-sm text-gray-400">{t('stepIndicator', { step })}</span>
         </div>
@@ -135,7 +135,7 @@ export function StepForm() {
                   size="sm"
                   onClick={() => fileInputRef.current?.click()}
                 >
-                  {t('uploadPDF')}
+                  {t('uploadPdf')}
                 </Button>
               </div>
               <Button onClick={() => { setError(null); setStep(2) }} disabled={!cv.trim()}>

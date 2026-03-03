@@ -7,7 +7,7 @@ interface Props {
 }
 
 export function MatchScore({ score }: Props) {
-  const t = useTranslations('ResultsPage')
+  const t = useTranslations('results')
   const [filled, setFilled] = useState(false)
 
   useEffect(() => {

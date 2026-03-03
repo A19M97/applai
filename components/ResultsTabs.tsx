@@ -10,7 +10,7 @@ import { SkillsBreakdown } from '@/components/SkillsBreakdown'
 import { InterviewQuestions } from '@/components/InterviewQuestions'
 
 export function ResultsTabs() {
-  const t = useTranslations('ResultsPage')
+  const t = useTranslations('results')
   const router = useRouter()
   const { session, clearSession } = useSession()
 
@@ -35,10 +35,10 @@ export function ResultsTabs() {
       <Tabs defaultValue="match">
         <TabsList className="w-full">
           <TabsTrigger value="match" className="flex-1">
-            {t('matchAnalysis')}
+            {t('matchTab')}
           </TabsTrigger>
           <TabsTrigger value="interview" className="flex-1">
-            {t('interviewPrep')}
+            {t('prepTab')}
           </TabsTrigger>
         </TabsList>
 
@@ -64,7 +64,7 @@ export function ResultsTabs() {
 
           <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
             <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-              {t('coverLetterTips')}
+              {t('coverTips')}
             </h3>
             <ul className="space-y-2">
               {analysis.coverLetterTips.map((tip, i) => (
@@ -81,11 +81,11 @@ export function ResultsTabs() {
           {prep ? (
             <>
               <InterviewQuestions
-                title={t('technicalQuestions')}
+                title={t('technicalQ')}
                 questions={prep.technicalQuestions}
               />
               <InterviewQuestions
-                title={t('behavioralQuestions')}
+                title={t('behavioralQ')}
                 questions={prep.behavioralQuestions}
               />
             </>
