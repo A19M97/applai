@@ -5,9 +5,27 @@ import { useRouter } from '@/i18n/routing'
 import { useSession } from '@/hooks/useSession'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { MatchScore } from '@/components/MatchScore'
 import { SkillsBreakdown } from '@/components/SkillsBreakdown'
 import { InterviewQuestions } from '@/components/InterviewQuestions'
+
+function ResultsSkeleton() {
+  return (
+    <div className="max-w-2xl mx-auto space-y-6">
+      <Skeleton className="h-10 w-full" />
+      <div className="space-y-4 mt-6">
+        <Skeleton className="h-32 w-full rounded-xl" />
+        <div className="grid grid-cols-2 gap-4">
+          <Skeleton className="h-40 rounded-xl" />
+          <Skeleton className="h-40 rounded-xl" />
+        </div>
+        <Skeleton className="h-36 w-full rounded-xl" />
+        <Skeleton className="h-36 w-full rounded-xl" />
+      </div>
+    </div>
+  )
+}
 
 export function ResultsTabs() {
   const t = useTranslations('results')
@@ -20,8 +38,9 @@ export function ResultsTabs() {
     }
   }, [session, router])
 
-  // session is null during SSR hydration — render nothing until client resolves it
-  if (!session?.analysis) return null
+  // session is null during SSR hydration — show skeleton until client resolves it
+  if (session === null) return <ResultsSkeleton />
+  if (!session.analysis) return null
 
   const { analysis, prep } = session
 

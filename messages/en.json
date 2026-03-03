@@ -20,7 +20,7 @@
     "back": "← Back",
     "analyze": "Analyze",
     "analyzing": "Analyzing...",
-    "resumeSession": "You have a previous analysis —",
+    "resumeSession": "Do you want see your last analysis?",
     "viewResults": "View results",
     "error": "Something went wrong. Please try again.",
     "errorAnalyze": "Failed to analyze your CV and job description. Please try again.",

@@ -1,232 +1,105 @@
-# Next.js 16 Full-Stack Boilerplate
+# Applai — Get briefed before your next job interview
 
-A production-ready starter template built with Next.js 16, Clerk authentication, Prisma 7 + PostgreSQL, and internationalization support.
+## Why I built this
 
-## Tech Stack
+While working on a technical test, I found myself doing something painfully manual: opening my CV in one tab, the job description in another, and spending 20 minutes cross-referencing skills, drafting mental notes for the cover letter, and guessing what interview questions might come up.
 
-- **Framework**: Next.js 16 (App Router)
-- **Language**: TypeScript
-- **Database**: PostgreSQL with Prisma 7
-- **Authentication**: Clerk (email OTP + magic links)
-- **UI Components**: shadcn/ui with Tailwind CSS v4
-- **Internationalization**: next-intl (English & Italian)
+So I built Applai — the tool I wished I had at that moment. Paste your CV and the job description, and in seconds you get a compatibility score, a skills gap analysis, and a set of tailored interview questions ready to practice.
 
-## Prerequisites
+---
 
-- **Node.js** 20.9+
-- **Docker** and **Docker Compose** (for PostgreSQL)
+## What it does
 
-## Getting Started
+**Step 1 — Paste your CV**
+Paste plain text or upload a PDF. Applai extracts the text automatically.
 
-Follow these steps in order to set up the project:
+**Step 2 — Paste the job description**
+Copy the full JD from any job board.
 
-### 1. Clone the repository
+**Step 3 — Analyze**
+Applai calls Claude to produce:
+- A **match score** (0–100) with animated progress bar
+- **Common skills** you already have vs **missing skills** to address
+- **Strengths** to highlight in your application
+- **Cover letter tips** tailored to this specific JD
+- 5 **technical questions** + 3 **behavioral questions**, each with a coaching hint
 
-Clone with a custom folder name to avoid conflicts when running multiple projects:
+Results persist in `localStorage` so you can come back without re-analyzing. A banner on the homepage lets you resume or start over.
 
-```bash
-git clone git@github.com:aledella12/boilerplate_nextjs.git <your-project-name>
-cd <your-project-name>
-```
+---
 
-### 2. Create environment file
-
-Copy `.env.example` to `.env` and fill in the required values:
+## Local setup
 
 ```bash
+git clone https://github.com/A19M97/applai.git
+cd applai
+
 cp .env.example .env
-```
+# Fill in your Anthropic API key:
+# ANTHROPIC_API_KEY=sk-ant-...
 
-Edit `.env` with your actual credentials:
-- **Database**: PostgreSQL connection string
-- **Clerk**: Get your keys from [Clerk Dashboard](https://dashboard.clerk.com)
-
-### 3. Install dependencies
-
-```bash
-npm ci
-```
-
-### 4. Start PostgreSQL
-
-Launch the database with Docker Compose:
-
-```bash
-docker compose up -d
-```
-
-The database will be available at `localhost:5436`.
-
-### 5. Push database schema
-
-```bash
-npm run db:push
-```
-
-### 6. Generate Prisma client
-
-```bash
-npm run db:generate
-```
-
-This creates the typed client in `./generated/`, required before the app can start.
-
-### 7. Start development server
-
-```bash
+npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser.
-
-## Available Scripts
-
-```bash
-# Development
-npm run dev          # Start development server
-
-# Building
-npm run build        # Build for production
-npm run start        # Start production server
-
-# Database
-npm run db:push      # Push schema to database
-npm run db:migrate   # Run migrations
-npm run db:studio    # Open Prisma Studio
-npm run db:seed      # Seed database
-npm run db:reset     # Reset database
-npm run db:generate  # Generate Prisma client
-
-# Code Quality
-npm run lint         # Run ESLint
-npm run type-check   # Type check with TypeScript
-```
-
-## Project Structure
-
-```
-/
-├── app/                    # Next.js App Router
-│   ├── (auth)/           # Authentication routes
-│   ├── (protected)/      # Protected routes
-│   ├── [locale]/         # Internationalization
-│   └── api/webhooks/     # API routes
-├── components/           # Reusable UI components
-├── hooks/               # Custom React hooks
-├── i18n/               # Internationalization config
-├── lib/                # Utilities and configs
-├── messages/           # Translation files
-└── prisma/             # Database schema
-```
-
-## 🔄 Come mantenere aggiornato il tuo fork con il repository originale
-
-Se hai forkato un repository (`repo1`) e stai sviluppando nel tuo fork (`repo2`), puoi mantenere il tuo fork sincronizzato con il repository originale seguendo questi passaggi.
+Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-### 🧭 1. Vai nella directory del tuo fork
+## Tech choices
 
-```bash
-cd percorso/del/tuo/repo2
-```
+### Next.js full-stack (App Router)
+Both the UI and the API routes live in a single Next.js 16 project — no separate backend to deploy. The `/api/analyze` and `/api/interview` routes call Claude server-side, so the API key never reaches the browser.
+
+### Claude AI (`claude-sonnet-4-20250514`)
+All prompts are pure functions in `/lib/prompts.ts`, never inlined in route handlers. Every response is strict JSON — the prompts explicitly forbid markdown fences or any preamble, so the output can be `JSON.parse()`d directly.
+
+### localStorage for persistence
+No database, no auth, no signup friction. The session (CV text, JD text, analysis, interview prep) is stored under a single key in `localStorage`. This is intentionally simple: the target user is someone who needs to prep for one interview right now, not someone building a long-term portfolio.
+
+### next-intl for i18n
+All user-facing strings live in `/messages/en.json` and `/messages/it.json`. No hardcoded strings in components. Locale routing follows the `[locale]` App Router convention with automatic static params generation.
+
+### shadcn/ui + Tailwind CSS v4
+Accessible primitives (Tabs, Accordion, Badge, Skeleton, Button) styled with Tailwind. Minimal: consistent spacing, mobile-first layout, skeleton loading states, no gratuitous animations beyond the score bar fill.
 
 ---
 
-### 🧩 2. Aggiungi il repository originale come *upstream*
-
-```bash
-git remote add upstream https://github.com/utente-originale/repo1.git
-```
-
-Verifica che sia stato aggiunto correttamente:
-
-```bash
-git remote -v
-```
-
-Dovresti vedere qualcosa come:
+## Project structure
 
 ```
-origin    https://github.com/tu-utente/repo2.git (fetch)
-origin    https://github.com/tu-utente/repo2.git (push)
-upstream  https://github.com/utente-originale/repo1.git (fetch)
-upstream  https://github.com/utente-originale/repo1.git (push)
+app/
+  [locale]/
+    page.tsx            # Homepage — multi-step form
+    results/page.tsx    # Results — tabs: Match Analysis | Interview Prep
+    layout.tsx          # Locale layout with per-locale meta tags
+  api/
+    analyze/route.ts    # POST — CV + JD → MatchAnalysis via Claude
+    interview/route.ts  # POST — CV + JD + summary → InterviewPrep via Claude
+  icon.tsx              # Emoji favicon (🎯) via Next.js ImageResponse
+components/
+  StepForm.tsx          # Multi-step controlled form (CV → JD → Analyze)
+  ResultsTabs.tsx       # Tab switcher with skeleton loading state
+  MatchScore.tsx        # Animated score bar (CSS transition on mount)
+  SkillsBreakdown.tsx   # Common vs missing skills, two-column grid
+  InterviewQuestions.tsx# Accordion: question + hint
+lib/
+  prompts.ts            # Pure functions that build Claude prompts
+  claude.ts             # Anthropic SDK wrapper
+  parsers.ts            # PDF text extraction (pdf-parse)
+  session.ts            # localStorage read/write/clear helpers
+  types.ts              # Shared TypeScript interfaces
+hooks/
+  useSession.ts         # SSR-safe React hook for session state
+messages/
+  en.json / it.json     # All UI strings
 ```
 
 ---
 
-### 🔄 3. Recupera gli ultimi cambiamenti dal repository originale
+## What I'd improve with more time
 
-```bash
-git fetch upstream
-```
-
----
-
-### ⚙️ 4. Unisci gli aggiornamenti nel tuo branch principale
-
-Spostati sul branch principale:
-
-```bash
-git checkout master
-```
-
-Poi scegli una delle due opzioni:
-
-#### 🔹 Opzione A: Merge (consigliata e più sicura)
-
-```bash
-git merge upstream/master
-```
-
-#### 🔹 Opzione B: Rebase (più pulita, ma riscrive la cronologia)
-
-```bash
-git rebase upstream/master
-```
-
----
-
-### 💾 5. Aggiorna il tuo fork su GitHub
-
-```bash
-git push origin master
-```
-
----
-
-### ✅ Riepilogo rapido
-
-Per aggiornare periodicamente il tuo fork:
-
-```bash
-git fetch upstream
-git checkout master
-git merge upstream/master
-git push origin master
-```
-
----
-
-💡 **Suggerimento:**
-Puoi creare uno script Bash per automatizzare tutto questo:
-
-```bash
-#!/bin/bash
-# sync-fork.sh - Aggiorna il fork con il repository originale
-
-git fetch upstream
-git checkout master
-git merge upstream/master
-git push origin master
-
-echo "✅ Fork aggiornato con successo!"
-```
-
-Rendi lo script eseguibile e lancialo ogni volta che vuoi aggiornare il tuo fork:
-
-```bash
-chmod +x sync-fork.sh
-./sync-fork.sh
-```
+- **Streaming responses** — stream Claude's output token-by-token so the results page fills in progressively instead of waiting for the full JSON. This would dramatically improve perceived performance, especially on slow connections.
+- **Database + shareable links** — swap `localStorage` for a lightweight DB (SQLite via Turso, or Postgres on Neon) with a unique URL per analysis. Useful for sending your prep session to a mentor or a friend.
+- **Multi-language CV support** — currently the prompts assume English. Detecting the input language and switching prompt language accordingly would improve accuracy for non-English speakers.
+- **Export to PDF** — a "Download prep sheet" button that generates a formatted PDF of the analysis and questions, ready to print the night before the interview.
