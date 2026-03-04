@@ -39,6 +39,8 @@
     "behavioralQ": "Behavioral Questions",
     "hint": "Hint",
     "startOver": "Start over",
-    "noPrepData": "Interview prep not available."
+    "noPrepData": "Interview prep not available.",
+    "errorAnalyze": "Failed to analyze your CV and job description. Please try again.",
+    "errorInterview": "Failed to generate interview questions. Please try again."
   }
 }

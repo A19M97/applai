@@ -39,6 +39,8 @@
     "behavioralQ": "Domande comportamentali",
     "hint": "Suggerimento",
     "startOver": "Ricomincia",
-    "noPrepData": "Preparazione al colloquio non disponibile."
+    "noPrepData": "Preparazione al colloquio non disponibile.",
+    "errorAnalyze": "Analisi fallita. Riprova.",
+    "errorInterview": "Generazione delle domande fallita. Riprova."
   }
 }

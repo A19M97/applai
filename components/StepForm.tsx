@@ -1,21 +1,17 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
-import { useTranslations, useLocale } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { Link, useRouter } from '@/i18n/routing'
 import { saveSession, loadSession } from '@/lib/session'
-import { MatchAnalysis, InterviewPrep } from '@/lib/types'
 import { Button } from '@/components/ui/button'
-import { Loader2 } from 'lucide-react'
 
 export function StepForm() {
   const t = useTranslations('form')
-  const locale = useLocale()
   const router = useRouter()
 
   const [step, setStep] = useState<1 | 2>(1)
   const [cv, setCv] = useState('')
   const [jd, setJd] = useState('')
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasSession, setHasSession] = useState(false)
 
@@ -23,7 +19,7 @@ export function StepForm() {
 
   useEffect(() => {
     const session = loadSession()
-    setHasSession(!!(session?.analysis))
+    setHasSession(!!(session?.cv))
   }, [])
 
   async function handlePDFUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -46,40 +42,9 @@ export function StepForm() {
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
-  async function handleSubmit() {
-    setError(null)
-    setLoading(true)
-
-    try {
-      const analyzeRes = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cv, jobDescription: jd, locale }),
-      })
-      const analyzeData = await analyzeRes.json()
-      if (!analyzeRes.ok) throw new Error(analyzeData.error ?? t('errorAnalyze'))
-
-      const analysis: MatchAnalysis = analyzeData
-      saveSession({ cv, jobDescription: jd, analysis })
-
-      const matchSummary = analysis.commonSkills.join(', ')
-      const interviewRes = await fetch('/api/interview', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cv, jobDescription: jd, matchSummary, locale }),
-      })
-      const interviewData = await interviewRes.json()
-      if (!interviewRes.ok) throw new Error(interviewData.error ?? t('errorInterview'))
-
-      const prep: InterviewPrep = interviewData
-      saveSession({ prep })
-
-      router.push('/results')
-    } catch (err) {
-      setError(err instanceof Error ? err.message : t('errorAnalyze'))
-    } finally {
-      setLoading(false)
-    }
+  function handleSubmit() {
+    saveSession({ cv, jobDescription: jd })
+    router.push('/results')
   }
 
   return (
@@ -155,19 +120,11 @@ export function StepForm() {
               <Button
                 variant="outline"
                 onClick={() => { setError(null); setStep(1) }}
-                disabled={loading}
               >
                 {t('back')}
               </Button>
-              <Button onClick={handleSubmit} disabled={!jd.trim() || loading}>
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('analyzing')}
-                  </>
-                ) : (
-                  t('analyze')
-                )}
+              <Button onClick={handleSubmit} disabled={!jd.trim()}>
+                {t('analyze')}
               </Button>
             </div>
           </>

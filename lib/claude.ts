@@ -6,16 +6,8 @@ const client = new Anthropic()
 const MODEL = 'claude-sonnet-4-20250514'
 const MAX_TOKENS = 1500
 
-function parseJSON<T>(text: string, context: string): T {
-  try {
-    return JSON.parse(text) as T
-  } catch {
-    throw new Error(`Failed to parse Claude response as JSON (${context}): ${text.slice(0, 200)}`)
-  }
-}
-
-export async function analyzeMatch(cv: string, jd: string, locale: string = 'en'): Promise<MatchAnalysis> {
-  const message = await client.messages.create({
+export function streamAnalyzeMatch(cv: string, jd: string, locale: string = 'en') {
+  return client.messages.stream({
     model: MODEL,
     max_tokens: MAX_TOKENS,
     messages: [
@@ -25,36 +17,17 @@ export async function analyzeMatch(cv: string, jd: string, locale: string = 'en'
       },
     ],
   })
-
-  const content = message.content[0]
-  if (content.type !== 'text') {
-    throw new Error('Unexpected response type from Claude')
-  }
-
-  return parseJSON<MatchAnalysis>(content.text, 'analyzeMatch')
 }
 
-export async function generateInterviewPrep(
-  cv: string,
-  jd: string,
-  matchSummary: string,
-  locale: string = 'en'
-): Promise<InterviewPrep> {
-  const message = await client.messages.create({
+export function streamInterviewPrep(cv: string, jd: string, locale: string = 'en') {
+  return client.messages.stream({
     model: MODEL,
     max_tokens: MAX_TOKENS,
     messages: [
       {
         role: 'user',
-        content: buildInterviewPrompt(cv, jd, matchSummary, locale),
+        content: buildInterviewPrompt(cv, jd, locale),
       },
     ],
   })
-
-  const content = message.content[0]
-  if (content.type !== 'text') {
-    throw new Error('Unexpected response type from Claude')
-  }
-
-  return parseJSON<InterviewPrep>(content.text, 'generateInterviewPrep')
 }

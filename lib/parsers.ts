@@ -1,5 +1,3 @@
-import pdfParse from 'pdf-parse';
-
 /**
  * Extracts plain text from a PDF File object.
  *
@@ -23,6 +21,7 @@ export async function extractTextFromPDF(file: File): Promise<string> {
   try {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    const pdfParse = (await import('pdf-parse')).default;
     const result = await pdfParse(buffer);
     text = result.text.trim();
   } catch (err) {
