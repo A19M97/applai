@@ -12,7 +12,15 @@ export function loadSession(): Session | null {
   const raw = localStorage.getItem(SESSION_KEY)
   if (!raw) return null
   try {
-    return JSON.parse(raw) as Session
+    const parsed: unknown = JSON.parse(raw)
+    if (
+      typeof parsed !== 'object' || parsed === null ||
+      typeof (parsed as Record<string, unknown>).cv !== 'string' ||
+      typeof (parsed as Record<string, unknown>).jobDescription !== 'string'
+    ) {
+      return null
+    }
+    return parsed as Session
   } catch {
     return null
   }
