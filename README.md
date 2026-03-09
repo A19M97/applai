@@ -1,5 +1,7 @@
 # Applai — Get briefed before your next job interview
 
+**Live demo:** [applai-eosin.vercel.app](https://applai-eosin.vercel.app)
+
 ## Why I built this
 
 While working on a technical test, I found myself doing something painfully manual: opening my CV in one tab, the job description in another, and spending 20 minutes cross-referencing skills, drafting mental notes for the cover letter, and guessing what interview questions might come up.
