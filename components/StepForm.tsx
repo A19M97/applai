@@ -1,26 +1,23 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { useTranslations } from 'next-intl'
 import { Link, useRouter } from '@/i18n/routing'
-import { saveSession, loadSession } from '@/lib/session'
+import { useSession } from '@/hooks/useSession'
 import { Button } from '@/components/ui/button'
 
 export function StepForm() {
   const t = useTranslations('form')
   const router = useRouter()
+  const { session, saveSession } = useSession()
 
   const [step, setStep] = useState<1 | 2>(1)
   const [cv, setCv] = useState('')
   const [jd, setJd] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [hasSession, setHasSession] = useState(false)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    const session = loadSession()
-    setHasSession(!!(session?.cv))
-  }, [])
+  const hasSession = !!(session?.cv)
 
   async function handlePDFUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
