@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useRouter } from '@/i18n/routing'
 import { useSession } from '@/hooks/useSession'
@@ -50,52 +50,7 @@ export function ResultsTabs() {
   const analysisSavedRef = useRef(false)
   const prepSavedRef = useRef(false)
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (session === null) return
-
-    // Resume mode: data already in localStorage — nothing to do, render from session directly
-    if (session.analysis) return
-
-    // No cv → go back home
-    if (!session.cv) {
-      router.push('/')
-      return
-    }
-
-    // Start streaming (only once)
-    if (streamStartedRef.current) return
-    streamStartedRef.current = true
-
-    startAnalyzeStream(session.cv, session.jobDescription)
-    startInterviewStream(session.cv, session.jobDescription)
-  }, [session])
-
-  // Persist analysis to localStorage when streaming completes (once)
-  useEffect(() => {
-    if (analysisSavedRef.current || analyzeStreaming || !partialAnalysis) return
-    if (
-      partialAnalysis.score !== undefined &&
-      partialAnalysis.commonSkills &&
-      partialAnalysis.missingSkills &&
-      partialAnalysis.strengths &&
-      partialAnalysis.coverLetterTips
-    ) {
-      analysisSavedRef.current = true
-      saveSession({ analysis: partialAnalysis as MatchAnalysis })
-    }
-  }, [analyzeStreaming, partialAnalysis, saveSession])
-
-  // Persist prep to localStorage when streaming completes (once)
-  useEffect(() => {
-    if (prepSavedRef.current || interviewStreaming || !partialPrep) return
-    if (partialPrep.technicalQuestions?.length && partialPrep.behavioralQuestions?.length) {
-      prepSavedRef.current = true
-      saveSession({ prep: partialPrep as InterviewPrep })
-    }
-  }, [interviewStreaming, partialPrep, saveSession])
-
-  async function startAnalyzeStream(cv: string, jd: string) {
+  const startAnalyzeStream = useCallback(async (cv: string, jd: string) => {
     analysisSavedRef.current = false
     setAnalyzeStreaming(true)
     setAnalyzeError(null)
@@ -110,11 +65,11 @@ export function ResultsTabs() {
         setAnalyzeError(t('errorAnalyze'))
         return
       }
-      const reader = res.body!.getReader()
+      const reader = res.body?.getReader()
+      if (!reader) { setAnalyzeError(t('errorAnalyze')); return }
       let sseBuffer = ''
       const partial: Partial<MatchAnalysis> = {}
-      let done = false
-      while (!done) {
+      outer: while (true) {
         const { done: chunkDone, value } = await reader.read()
         if (chunkDone) break
         sseBuffer += decoder.decode(value, { stream: true })
@@ -122,7 +77,7 @@ export function ResultsTabs() {
         sseBuffer = events.pop() ?? ''
         for (const event of events) {
           const data = event.replace(/^data: /, '').trim()
-          if (data === '[DONE]') { done = true; break }
+          if (data === '[DONE]') break outer
           if (!data) continue
           try {
             const parsed = JSON.parse(data) as Partial<MatchAnalysis> & { error?: string }
@@ -139,9 +94,9 @@ export function ResultsTabs() {
     } finally {
       setAnalyzeStreaming(false)
     }
-  }
+  }, [locale, t])
 
-  async function startInterviewStream(cv: string, jd: string) {
+  const startInterviewStream = useCallback(async (cv: string, jd: string) => {
     prepSavedRef.current = false
     setInterviewStreaming(true)
     setInterviewError(null)
@@ -158,10 +113,10 @@ export function ResultsTabs() {
         setInterviewError(t('errorInterview'))
         return
       }
-      const reader = res.body!.getReader()
+      const reader = res.body?.getReader()
+      if (!reader) { setInterviewError(t('errorInterview')); return }
       let sseBuffer = ''
-      let done = false
-      while (!done) {
+      outer: while (true) {
         const { done: chunkDone, value } = await reader.read()
         if (chunkDone) break
         sseBuffer += decoder.decode(value, { stream: true })
@@ -169,7 +124,7 @@ export function ResultsTabs() {
         sseBuffer = events.pop() ?? ''
         for (const event of events) {
           const data = event.replace(/^data: /, '').trim()
-          if (data === '[DONE]') { done = true; break }
+          if (data === '[DONE]') break outer
           if (!data) continue
           try {
             const parsed = JSON.parse(data) as {
@@ -194,7 +149,51 @@ export function ResultsTabs() {
     } finally {
       setInterviewStreaming(false)
     }
-  }
+  }, [locale, t])
+
+  useEffect(() => {
+    if (session === null) return
+
+    // Resume mode: data already in localStorage — nothing to do, render from session directly
+    if (session.analysis) return
+
+    // No cv → go back home
+    if (!session.cv) {
+      router.push('/')
+      return
+    }
+
+    // Start streaming (only once)
+    if (streamStartedRef.current) return
+    streamStartedRef.current = true
+
+    startAnalyzeStream(session.cv, session.jobDescription)
+    startInterviewStream(session.cv, session.jobDescription)
+  }, [session, startAnalyzeStream, startInterviewStream, router])
+
+  // Persist analysis to localStorage when streaming completes (once)
+  useEffect(() => {
+    if (analysisSavedRef.current || analyzeStreaming || !partialAnalysis) return
+    if (
+      partialAnalysis.score !== undefined &&
+      partialAnalysis.commonSkills &&
+      partialAnalysis.missingSkills &&
+      partialAnalysis.strengths &&
+      partialAnalysis.coverLetterTips
+    ) {
+      analysisSavedRef.current = true
+      saveSession({ analysis: partialAnalysis as MatchAnalysis })
+    }
+  }, [analyzeStreaming, partialAnalysis, saveSession])
+
+  // Persist prep to localStorage when streaming completes (once)
+  useEffect(() => {
+    if (prepSavedRef.current || interviewStreaming || !partialPrep) return
+    if (partialPrep.technicalQuestions?.length && partialPrep.behavioralQuestions?.length) {
+      prepSavedRef.current = true
+      saveSession({ prep: partialPrep as InterviewPrep })
+    }
+  }, [interviewStreaming, partialPrep, saveSession])
 
   function handleStartOver() {
     clearSession()
