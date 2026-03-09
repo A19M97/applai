@@ -1,4 +1,7 @@
 {
+  "languageSwitcher": {
+    "label": "Lingua"
+  },
   "HomePage": {
     "appName": "Applai",
     "title": "Preparati prima del tuo prossimo colloquio",

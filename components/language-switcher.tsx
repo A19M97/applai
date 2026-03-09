@@ -2,7 +2,7 @@
 
 import { useTransition } from 'react';
 import { useRouter, usePathname } from '@/i18n/routing';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -30,6 +30,7 @@ export function LanguageSwitcher({ inline = false }: LanguageSwitcherProps) {
   const pathname = usePathname();
   const locale = useLocale();
   const [isPending, startTransition] = useTransition();
+  const t = useTranslations('languageSwitcher');
 
   const handleLanguageChange = (newLocale: string) => {
     startTransition(() => {
@@ -42,7 +43,7 @@ export function LanguageSwitcher({ inline = false }: LanguageSwitcherProps) {
       <DropdownMenuSub>
         <DropdownMenuSubTrigger disabled={isPending}>
           <Globe className={`mr-2 h-4 w-4 ${isPending ? 'animate-spin' : ''}`} />
-          <span>Language</span>
+          <span>{t('label')}</span>
         </DropdownMenuSubTrigger>
         <DropdownMenuSubContent>
           {languages.map((language) => (

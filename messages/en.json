@@ -1,4 +1,7 @@
 {
+  "languageSwitcher": {
+    "label": "Language"
+  },
   "HomePage": {
     "appName": "Applai",
     "title": "Get briefed before your next job interview",
