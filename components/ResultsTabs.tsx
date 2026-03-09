@@ -1,9 +1,11 @@
 'use client'
-import { useEffect, useState, useRef, useCallback } from 'react'
+import { useEffect, useRef } from 'react'
 import { useTranslations, useLocale } from 'next-intl'
 import { useRouter } from '@/i18n/routing'
 import { useSession } from '@/hooks/useSession'
-import { MatchAnalysis, InterviewPrep, Question } from '@/lib/types'
+import { useAnalyzeStream } from '@/hooks/useAnalyzeStream'
+import { useInterviewStream } from '@/hooks/useInterviewStream'
+import { MatchAnalysis, InterviewPrep } from '@/lib/types'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -38,162 +40,47 @@ export function ResultsTabs() {
   const router = useRouter()
   const { session, saveSession, clearSession } = useSession()
 
-  const [partialAnalysis, setPartialAnalysis] = useState<Partial<MatchAnalysis> | null>(null)
-  const [partialPrep, setPartialPrep] = useState<Partial<InterviewPrep> | null>(null)
-  const [analyzeStreaming, setAnalyzeStreaming] = useState(false)
-  const [interviewStreaming, setInterviewStreaming] = useState(false)
-  const [analyzeError, setAnalyzeError] = useState<string | null>(null)
-  const [interviewError, setInterviewError] = useState<string | null>(null)
+  const analyze = useAnalyzeStream(locale)
+  const interview = useInterviewStream(locale)
 
-  // Refs to prevent double-start and guard against repeated saves
+  // Prevent double-start on StrictMode double-invoke and guard against repeated saves
   const streamStartedRef = useRef(false)
   const analysisSavedRef = useRef(false)
   const prepSavedRef = useRef(false)
 
-  const startAnalyzeStream = useCallback(async (cv: string, jd: string) => {
-    analysisSavedRef.current = false
-    setAnalyzeStreaming(true)
-    setAnalyzeError(null)
-    const decoder = new TextDecoder()
-    try {
-      const res = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cv, jobDescription: jd, locale }),
-      })
-      if (!res.ok) {
-        setAnalyzeError(t('errorAnalyze'))
-        return
-      }
-      const reader = res.body?.getReader()
-      if (!reader) { setAnalyzeError(t('errorAnalyze')); return }
-      let sseBuffer = ''
-      const partial: Partial<MatchAnalysis> = {}
-      outer: while (true) {
-        const { done: chunkDone, value } = await reader.read()
-        if (chunkDone) break
-        sseBuffer += decoder.decode(value, { stream: true })
-        const events = sseBuffer.split('\n\n')
-        sseBuffer = events.pop() ?? ''
-        for (const event of events) {
-          const data = event.replace(/^data: /, '').trim()
-          if (data === '[DONE]') break outer
-          if (!data) continue
-          try {
-            const parsed = JSON.parse(data) as Partial<MatchAnalysis> & { error?: string }
-            if (parsed.error) { setAnalyzeError(parsed.error); return }
-            Object.assign(partial, parsed)
-            setPartialAnalysis({ ...partial })
-          } catch {
-            // skip malformed token
-          }
-        }
-      }
-    } catch {
-      setAnalyzeError(t('errorAnalyze'))
-    } finally {
-      setAnalyzeStreaming(false)
-    }
-  }, [locale, t])
-
-  const startInterviewStream = useCallback(async (cv: string, jd: string) => {
-    prepSavedRef.current = false
-    setInterviewStreaming(true)
-    setInterviewError(null)
-    const decoder = new TextDecoder()
-    const techQuestions: Question[] = []
-    const behavQuestions: Question[] = []
-    try {
-      const res = await fetch('/api/interview', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cv, jobDescription: jd, locale }),
-      })
-      if (!res.ok) {
-        setInterviewError(t('errorInterview'))
-        return
-      }
-      const reader = res.body?.getReader()
-      if (!reader) { setInterviewError(t('errorInterview')); return }
-      let sseBuffer = ''
-      outer: while (true) {
-        const { done: chunkDone, value } = await reader.read()
-        if (chunkDone) break
-        sseBuffer += decoder.decode(value, { stream: true })
-        const events = sseBuffer.split('\n\n')
-        sseBuffer = events.pop() ?? ''
-        for (const event of events) {
-          const data = event.replace(/^data: /, '').trim()
-          if (data === '[DONE]') break outer
-          if (!data) continue
-          try {
-            const parsed = JSON.parse(data) as {
-              technicalQuestion?: Question
-              behavioralQuestion?: Question
-              error?: string
-            }
-            if (parsed.error) { setInterviewError(parsed.error); return }
-            if (parsed.technicalQuestion) techQuestions.push(parsed.technicalQuestion)
-            else if (parsed.behavioralQuestion) behavQuestions.push(parsed.behavioralQuestion)
-            setPartialPrep({
-              technicalQuestions: [...techQuestions],
-              behavioralQuestions: [...behavQuestions],
-            })
-          } catch {
-            // skip malformed token
-          }
-        }
-      }
-    } catch {
-      setInterviewError(t('errorInterview'))
-    } finally {
-      setInterviewStreaming(false)
-    }
-  }, [locale, t])
-
+  // Start streaming when session is loaded for the first time (no existing analysis)
   useEffect(() => {
     if (session === null) return
-
-    // Resume mode: data already in localStorage — nothing to do, render from session directly
     if (session.analysis) return
-
-    // No cv → go back home
-    if (!session.cv) {
-      router.push('/')
-      return
-    }
-
-    // Start streaming (only once)
+    if (!session.cv) { router.push('/'); return }
     if (streamStartedRef.current) return
     streamStartedRef.current = true
-
-    startAnalyzeStream(session.cv, session.jobDescription)
-    startInterviewStream(session.cv, session.jobDescription)
-  }, [session, startAnalyzeStream, startInterviewStream, router])
+    analyze.start(session.cv, session.jobDescription)
+    interview.start(session.cv, session.jobDescription)
+  }, [session, analyze.start, interview.start, router])
 
   // Persist analysis to localStorage when streaming completes (once)
   useEffect(() => {
-    if (analysisSavedRef.current || analyzeStreaming || !partialAnalysis) return
+    if (analysisSavedRef.current || analyze.streaming || !analyze.partial) return
+    const p = analyze.partial
     if (
-      partialAnalysis.score !== undefined &&
-      partialAnalysis.commonSkills &&
-      partialAnalysis.missingSkills &&
-      partialAnalysis.strengths &&
-      partialAnalysis.coverLetterTips
+      p.score !== undefined &&
+      p.commonSkills && p.missingSkills && p.strengths && p.coverLetterTips
     ) {
       analysisSavedRef.current = true
-      saveSession({ analysis: partialAnalysis as MatchAnalysis })
+      saveSession({ analysis: p as MatchAnalysis })
     }
-  }, [analyzeStreaming, partialAnalysis, saveSession])
+  }, [analyze.streaming, analyze.partial, saveSession])
 
   // Persist prep to localStorage when streaming completes (once)
   useEffect(() => {
-    if (prepSavedRef.current || interviewStreaming || !partialPrep) return
-    if (partialPrep.technicalQuestions?.length && partialPrep.behavioralQuestions?.length) {
+    if (prepSavedRef.current || interview.streaming || !interview.partial) return
+    const p = interview.partial
+    if (p.technicalQuestions?.length && p.behavioralQuestions?.length) {
       prepSavedRef.current = true
-      saveSession({ prep: partialPrep as InterviewPrep })
+      saveSession({ prep: p as InterviewPrep })
     }
-  }, [interviewStreaming, partialPrep, saveSession])
+  }, [interview.streaming, interview.partial, saveSession])
 
   function handleStartOver() {
     clearSession()
@@ -204,11 +91,11 @@ export function ResultsTabs() {
   if (session === null) return <HydrationSkeleton />
 
   // Merge: prefer session (resume) over streaming state
-  const displayAnalysis: Partial<MatchAnalysis> | null = session.analysis ?? partialAnalysis
-  const displayPrep: Partial<InterviewPrep> | null = session.prep ?? partialPrep
+  const displayAnalysis: Partial<MatchAnalysis> | null = session.analysis ?? analyze.partial
+  const displayPrep: Partial<InterviewPrep> | null = session.prep ?? interview.partial
 
   // Session loaded but streaming hasn't started yet (useEffect fires after render)
-  if (!displayAnalysis && !analyzeStreaming && !analyzeError) {
+  if (!displayAnalysis && !analyze.streaming && !analyze.error) {
     if (session.cv) return <HydrationSkeleton />
     return null // will redirect via useEffect
   }
@@ -217,17 +104,13 @@ export function ResultsTabs() {
     <div className="max-w-2xl mx-auto space-y-6">
       <Tabs defaultValue="match">
         <TabsList className="w-full">
-          <TabsTrigger value="match" className="flex-1">
-            {t('matchTab')}
-          </TabsTrigger>
-          <TabsTrigger value="interview" className="flex-1">
-            {t('prepTab')}
-          </TabsTrigger>
+          <TabsTrigger value="match" className="flex-1">{t('matchTab')}</TabsTrigger>
+          <TabsTrigger value="interview" className="flex-1">{t('prepTab')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="match" className="mt-6 space-y-4">
-          {analyzeError ? (
-            <p className="text-sm text-red-600 dark:text-red-400">{analyzeError}</p>
+          {analyze.error ? (
+            <p className="text-sm text-red-600 dark:text-red-400">{analyze.error}</p>
           ) : (
             <>
               {displayAnalysis?.score !== undefined ? (
@@ -288,28 +171,22 @@ export function ResultsTabs() {
         </TabsContent>
 
         <TabsContent value="interview" className="mt-6 space-y-4">
-          {interviewError ? (
-            <p className="text-sm text-red-600 dark:text-red-400">{interviewError}</p>
+          {interview.error ? (
+            <p className="text-sm text-red-600 dark:text-red-400">{interview.error}</p>
           ) : displayPrep?.technicalQuestions?.length || displayPrep?.behavioralQuestions?.length ? (
             <>
               {displayPrep.technicalQuestions?.length ? (
-                <InterviewQuestions
-                  title={t('technicalQ')}
-                  questions={displayPrep.technicalQuestions}
-                />
+                <InterviewQuestions title={t('technicalQ')} questions={displayPrep.technicalQuestions} />
               ) : (
                 <SectionSkeleton className="h-32" />
               )}
               {displayPrep.behavioralQuestions?.length ? (
-                <InterviewQuestions
-                  title={t('behavioralQ')}
-                  questions={displayPrep.behavioralQuestions}
-                />
-              ) : interviewStreaming ? (
+                <InterviewQuestions title={t('behavioralQ')} questions={displayPrep.behavioralQuestions} />
+              ) : interview.streaming ? (
                 <SectionSkeleton className="h-32" />
               ) : null}
             </>
-          ) : interviewStreaming ? (
+          ) : interview.streaming ? (
             <>
               <SectionSkeleton className="h-32" />
               <SectionSkeleton className="h-32" />
