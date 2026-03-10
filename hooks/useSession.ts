@@ -16,6 +16,9 @@ let cachedRaw: string | null | undefined // undefined = not yet read
 let cachedSession: Session | null = null
 
 function getSnapshot(): Session | null {
+  // useSyncExternalStore calls this only in browser context;
+  // the server snapshot (third arg, returns null) handles SSR.
+  if (typeof window === 'undefined') return null
   const raw = localStorage.getItem(SESSION_KEY)
   if (raw === cachedRaw) return cachedSession
   cachedRaw = raw
