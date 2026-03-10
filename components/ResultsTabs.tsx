@@ -87,17 +87,17 @@ export function ResultsTabs() {
     router.push('/')
   }
 
-  // SSR hydration — session not yet read from localStorage
+  // SSR hydration OR session loaded but useEffect hasn't fired yet
   if (session === null) return <HydrationSkeleton />
 
   // Merge: prefer session (resume) over streaming state
   const displayAnalysis: Partial<MatchAnalysis> | null = session.analysis ?? analyze.partial
   const displayPrep: Partial<InterviewPrep> | null = session.prep ?? interview.partial
 
-  // Session loaded but streaming hasn't started yet (useEffect fires after render)
+  // Not started yet (useEffect fires after render) — show skeleton instead of flash
   if (!displayAnalysis && !analyze.streaming && !analyze.error) {
-    if (session.cv) return <HydrationSkeleton />
-    return null // will redirect via useEffect
+    if (!session.cv) return null // will redirect via useEffect
+    return <HydrationSkeleton />
   }
 
   return (
