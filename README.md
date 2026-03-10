@@ -102,4 +102,4 @@ messages/
 ## What I'd improve with more time
 
 - ~~**Streaming responses** — stream Claude's output token-by-token so the results page fills in progressively instead of waiting for the full JSON. This would dramatically improve perceived performance, especially on slow connections.~~
-- **Database + shareable links** — swap `localStorage` for a lightweight DB (SQLite via Turso, or Postgres on Neon) with a unique URL per analysis. Useful for sending your prep session to a mentor or a friend.
+- **Database + shareable links** — swap `localStorage` for a lightweight DB with a unique URL per analysis. Useful for sending your prep session to a mentor or a friend.
