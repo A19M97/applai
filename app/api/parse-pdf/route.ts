@@ -14,6 +14,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No file provided' }, { status: 400 })
   }
 
+  const maxBytes = parseInt(process.env.MAX_PDF_SIZE_BYTES ?? '5242880', 10) // default 5 MB
+  if (file.size > maxBytes) {
+    return NextResponse.json({ error: 'File too large' }, { status: 413 })
+  }
+
   try {
     const text = await extractTextFromPDF(file)
     return NextResponse.json({ text })
