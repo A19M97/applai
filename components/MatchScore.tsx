@@ -2,11 +2,11 @@
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 
-interface Props {
+interface MatchScoreProps {
   score: number
 }
 
-export function MatchScore({ score }: Props) {
+export function MatchScore({ score }: MatchScoreProps) {
   const t = useTranslations('results')
   const [filled, setFilled] = useState(false)
 

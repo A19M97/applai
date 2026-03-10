@@ -32,7 +32,8 @@ export function StepForm() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Unknown error')
       setCv(data.text)
-    } catch {
+    } catch (err) {
+      if (process.env.NODE_ENV === 'development') console.error('[StepForm] PDF upload error:', err)
       setError(t('errorPDF'))
     }
 
