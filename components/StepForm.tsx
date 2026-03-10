@@ -3,20 +3,20 @@ import { useState, useRef, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { Link, useRouter } from '@/i18n/routing'
 import { useSession } from '@/hooks/useSession'
+import { saveSession as persistSave } from '@/lib/session'
 import { Button } from '@/components/ui/button'
 import { Loader2 } from 'lucide-react'
 
 export function StepForm() {
   const t = useTranslations('form')
   const router = useRouter()
-  const { session, saveSession, clearSession } = useSession()
+  const { session, clearSession } = useSession()
 
   const [step, setStep] = useState<1 | 2>(1)
   const [cv, setCv] = useState('')
   const [jd, setJd] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => setMounted(true), [])
@@ -50,8 +50,7 @@ export function StepForm() {
   }
 
   function handleSubmit() {
-    setSubmitting(true)
-    saveSession({ cv, jobDescription: jd })
+    persistSave({ cv, jobDescription: jd })
     router.push('/results')
   }
 
@@ -153,8 +152,7 @@ export function StepForm() {
               >
                 {t('back')}
               </Button>
-              <Button onClick={handleSubmit} disabled={!jd.trim() || submitting}>
-                {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              <Button onClick={handleSubmit} disabled={!jd.trim()}>
                 {t('analyze')}
               </Button>
             </div>
