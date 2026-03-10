@@ -24,10 +24,15 @@ export function streamClaudeToSSE(claudeStream: MessageStream): Response {
         if (buffer.trim()) controller.enqueue(sseData(buffer.trim()))
         controller.enqueue(sseData('[DONE]'))
       } catch (err) {
-        const message = err instanceof Error ? err.message : 'Unexpected error'
-        controller.enqueue(sseData(JSON.stringify({ error: message })))
+        try {
+          const message = err instanceof Error ? err.message : 'Unexpected error'
+          controller.enqueue(sseData(JSON.stringify({ error: message })))
+        } catch {
+          // client disconnected before error could be sent
+        }
+      } finally {
+        controller.close()
       }
-      controller.close()
     },
   })
 
